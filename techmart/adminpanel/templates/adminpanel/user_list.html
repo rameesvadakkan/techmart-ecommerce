@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h3 class="mb-4">All Users</h3>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Date Joined</th>
+                <th>Last Login</th>
+                <th>Is Staff</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.date_joined|date:"M d, Y h:i A" }}</td>
+                <td>
+                    {% if user.last_login %}
+                        {{ user.last_login|date:"M d, Y h:i A" }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_staff %}
+                        <span class="badge bg-success">Admin</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Customer</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+{% endblock %}

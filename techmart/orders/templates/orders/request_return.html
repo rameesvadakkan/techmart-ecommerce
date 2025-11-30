@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h3>Return Item: {{ item.product.name }}</h3>
+
+<form method="POST">
+    {% csrf_token %}
+    <label>Reason for Return</label>
+    <textarea name="reason" class="form-control" required></textarea>
+
+    <button class="btn btn-warning mt-3">Submit Return Request</button>
+</form>
+
+{% endblock %}

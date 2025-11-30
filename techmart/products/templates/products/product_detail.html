@@ -1,0 +1,87 @@
+{% extends "core/base.html" %}
+{% load product_extras %}
+
+{% block content %}
+
+<div class="row">
+
+  <!-- Product Image -->
+  <div class="col-md-5 text-center">
+    <img src="{{ product.image.url }}" alt="{{ product.name }}"
+         class="img-fluid rounded shadow-sm">
+  </div>
+
+  <!-- Product Details -->
+  <div class="col-md-7">
+
+    <h2 class="mb-2">{{ product.name }}</h2>
+    <h4 class="text-success mb-3">₹{{ product.price }}</h4>
+
+    <p class="text-muted">{{ product.description }}</p>
+
+    <!-- Rating -->
+    <p class="mt-2 fs-5">
+      ⭐ <strong>{{ product.ratings.all|average }}/5</strong>
+      <span class="text-muted">({{ product.ratings.count }} reviews)</span>
+    </p>
+
+    <!-- Action Buttons -->
+    <div class="mt-4 d-flex flex-wrap gap-3">
+
+      <!-- Add Rating -->
+      <a href="{% url 'add_rating' product.slug %}"
+         class="btn btn-outline-primary btn-lg">
+        ⭐ Add Rating
+      </a>
+
+      <!-- Add to Cart -->
+      {% if product.stock > 0 %}
+        <a href="{% url 'cart_add' product.id %}"
+           class="btn btn-success btn-lg">
+          🛒 Add to Cart
+        </a>
+      {% else %}
+        <button class="btn btn-secondary btn-lg" disabled>
+          Out of Stock
+        </button>
+      {% endif %}
+
+      <!-- Wishlist -->
+      <a href="{% url 'add_to_wishlist' product.id %}"
+         class="btn btn-danger btn-lg">
+        ❤️ Add to Wishlist
+      </a>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Reviews -->
+<div class="mt-5">
+
+  <h4 class="mb-3">Customer Reviews</h4>
+
+  {% for r in product.ratings.all %}
+  <div class="card mb-3 shadow-sm">
+    <div class="card-body">
+
+      <h6 class="mb-1">{{ r.user.username }}</h6>
+
+      <p class="mb-1">⭐ {{ r.rating }}/5</p>
+
+      <p>{{ r.review }}</p>
+
+      <small class="text-muted">
+        {{ r.created_at|date:"M d, Y h:i A" }}
+      </small>
+
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-muted">No reviews yet.</p>
+  {% endfor %}
+
+</div>
+
+{% endblock %}

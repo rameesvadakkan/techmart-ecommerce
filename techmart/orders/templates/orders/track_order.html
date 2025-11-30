@@ -1,0 +1,78 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h3>Tracking Order #{{ order.id }}</h3>
+<hr>
+
+<style>
+.tracker-step {
+    text-align: center;
+    width: 20%;
+    float: left;
+}
+.tracker-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 3px solid lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    font-weight: bold;
+}
+.tracker-line {
+    height: 3px;
+    background: lightgray;
+    position: relative;
+    top: 20px;
+}
+.active-step .tracker-icon {
+    border-color: #198754;
+    color: white;
+    background: #198754;
+}
+.active-line {
+    background: #198754;
+}
+</style>
+
+<div class="mt-4">
+
+    <div class="d-flex justify-content-between">
+        
+        <div class="tracker-step {% if order.status in 'pending packed shipped out_for_delivery delivered' %}active-step{% endif %}">
+            <div class="tracker-icon">1</div>
+            <p class="mt-2">Order Placed</p>
+        </div>
+
+        <div class="tracker-step {% if order.status in 'packed shipped out_for_delivery delivered' %}active-step{% endif %}">
+            <div class="tracker-icon">2</div>
+            <p class="mt-2">Packed</p>
+        </div>
+
+        <div class="tracker-step {% if order.status in 'shipped out_for_delivery delivered' %}active-step{% endif %}">
+            <div class="tracker-icon">3</div>
+            <p class="mt-2">Shipped</p>
+        </div>
+
+        <div class="tracker-step {% if order.status in 'out_for_delivery delivered' %}active-step{% endif %}">
+            <div class="tracker-icon">4</div>
+            <p class="mt-2">Out for Delivery</p>
+        </div>
+
+        <div class="tracker-step {% if order.status == 'delivered' %}active-step{% endif %}">
+            <div class="tracker-icon">5</div>
+            <p class="mt-2">Delivered</p>
+        </div>
+
+    </div>
+</div>
+
+<hr>
+
+<p><strong>Current Status:</strong>
+   <span class="badge bg-success">{{ order.get_status_display }}</span>
+</p>
+
+{% endblock %}

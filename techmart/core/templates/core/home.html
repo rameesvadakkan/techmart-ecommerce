@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block content %}
+<section class="text-center py-5 bg-light">
+  <div class="container">
+    <h1 class="display-5 fw-bold mb-3 text-success">Welcome to TechMart</h1>
+    <p class="lead text-muted mb-4">
+      Discover the latest mobiles, laptops, and accessories — all in one place.
+    </p>
+    <a href="{% url "product_list" %}" class="btn btn-success btn-lg px-4 py-2 shadow-sm">🛒 Shop Now</a>
+  </div>
+</section>
+{% endblock %}
+
+

@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">My Return Requests</h2>
+
+    {% if requests %}
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Order</th>
+                <th>Status</th>
+                <th>Reason</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for r in requests %}
+            <tr>
+                <td>#{{ r.id }}</td>
+                <td>{{ r.item.product.name }}</td>
+                <td>#{{ r.order.id }}</td>
+                <td>
+                    <span class="badge 
+                        {% if r.status == 'pending' %} bg-warning
+                        {% elif r.status == 'approved' %} bg-primary
+                        {% elif r.status == 'refunded' %} bg-success
+                        {% else %} bg-danger 
+                        {% endif %}
+                    ">
+                        {{ r.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ r.reason }}</td>
+                <td>{{ r.created_at|date:"d M Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+        <p class="text-muted">You have not submitted any return requests yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container text-center my-5">
+
+    <!-- Success Animation -->
+    <div class="mb-4">
+        <svg width="90" height="90" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="#28a745" opacity="0.1" />
+            <circle cx="60" cy="60" r="40" fill="#28a745" opacity="0.2" />
+            <path d="M40 60 L55 75 L85 45" 
+                  stroke="#28a745" 
+                  stroke-width="8" 
+                  fill="none" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round" />
+        </svg>
+    </div>
+
+    <h2 class="text-success fw-bold">Order Placed Successfully!</h2>
+    <p class="text-muted mb-4">Thank you for your purchase.</p>
+
+    <!-- Order Details Card -->
+    <div class="col-md-6 mx-auto">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="fw-bold">Order ID: #{{ order.id }}</h5>
+                <p class="mb-1"><strong>Name:</strong> {{ order.full_name }}</p>
+                <p class="mb-1"><strong>Phone:</strong> {{ order.phone }}</p>
+                <p class="mb-1"><strong>Address:</strong> {{ order.address }}, {{ order.city }} - {{ order.pincode }}</p>
+
+                <hr>
+
+                <p><strong>Total Paid:</strong> ₹{{ order.total_amount }}</p>
+                <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                <p><strong>Expected Delivery:</strong> 
+   {{ order.estimated_delivery|date:"l, d M Y" }}
+</p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-4">
+        <a href="{% url 'order_list' %}" class="btn btn-outline-dark me-2">
+            View My Orders
+        </a>
+        <a href="/" class="btn btn-success">
+            Continue Shopping
+        </a>
+    </div>
+
+</div>
+{% endblock %}

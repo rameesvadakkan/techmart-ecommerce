@@ -1,0 +1,42 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h3 class="mb-4">Add New Product</h3>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label>Name</label>
+        <input type="text" class="form-control" name="name" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Price</label>
+        <input type="number" class="form-control" name="price" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Stock</label>
+        <input type="number" class="form-control" name="stock" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Category</label>
+        <select name="category" class="form-select">
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Image</label>
+        <input type="file" class="form-control" name="image" required>
+    </div>
+
+    <button class="btn btn-success">Add Product</button>
+    <a href="{% url 'adminpanel:product_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

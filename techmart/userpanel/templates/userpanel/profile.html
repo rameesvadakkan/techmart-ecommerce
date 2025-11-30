@@ -1,0 +1,13 @@
+{% extends "userpanel/base_userpanel.html" %}
+
+{% block user_content %}
+<h3>My Profile</h3>
+<hr>
+<img src="{{ request.user.profile.profile_image.url }}" width="150" class="rounded shadow-sm mb-3">
+<p><strong>FullName: </strong> {{ request.user.get_full_name }}</p>
+<p><strong>Username: </strong> {{ request.user.username }}</p>
+<p><strong>Phone: </strong> {{ request.user.profile.phone }}</p>
+<p><strong>Email: </strong> {{ request.user.email }}</p>
+
+<a href="/accounts/password_change/" class="btn btn-warning">Change Password</a>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h3>Return Requests</h3>
+<hr>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Order</th>
+            <th>Product</th>
+            <th>User</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for r in requests %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>#{{ r.order.id }}</td>
+            <td>{{ r.item.product.name }}</td>
+            <td>{{ r.user.username }}</td>
+            <td>
+                <span class="badge bg-warning">{{ r.get_status_display }}</span>
+            </td>
+            <td>{{ r.created_at|date:"M d, Y" }}</td>
+            <td>
+                <a href="{% url 'adminpanel:manage_return' r.id %}"
+                   class="btn btn-success btn-sm">Manage</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

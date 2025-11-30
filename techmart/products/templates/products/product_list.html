@@ -1,0 +1,134 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<style>
+  .category-link {
+    text-decoration: none;
+    color: #198754;
+    transition: color 0.3s ease;
+  }
+  .category-link:hover {
+    color: #0a5c37;
+  }
+  .btn-green {
+    background-color: #198754;
+    border: none;
+  }
+  .btn-green:hover {
+    background-color: #0a5c37;
+  }
+</style>
+
+<div class="row">
+
+  <!-- Sidebar -->
+  <div class="col-md-3">
+
+    <!-- Categories -->
+    <h5>Categories</h5>
+    <ul class="list-group mb-4">
+      <li class="list-group-item">
+        <a href="{% url 'product_list' %}" class="category-link">All</a>
+      </li>
+      {% for cat in categories %}
+      <li class="list-group-item">
+        <a href="{% url 'product_list_by_category' cat.slug %}" class="category-link">
+          {{ cat.name }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Filters -->
+    <h5>Filters</h5>
+    <form method="GET" class="border p-3 rounded">
+
+      <!-- Price -->
+      <label class="form-label fw-bold">Price Range</label>
+      <div class="input-group mb-3">
+        <input type="number" name="min" class="form-control"
+               placeholder="Min" value="{{ request.GET.min }}">
+        <input type="number" name="max" class="form-control"
+               placeholder="Max" value="{{ request.GET.max }}">
+      </div>
+
+      <!-- Sort -->
+      <label class="form-label fw-bold">Sort by</label>
+      <select class="form-select mb-3" name="sort">
+        <option value="">Default</option>
+        <option value="low">Price: Low → High</option>
+        <option value="high">Price: High → Low</option>
+        <option value="new">Newest First</option>
+        <option value="rating">Rating: High → Low</option>
+      </select>
+
+      <button class="btn btn-success w-100">Apply</button>
+
+    </form>
+
+  </div>
+
+  <!-- Product Listing -->
+  <div class="col-md-9">
+    <div class="row">
+      {% for product in products %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="text-muted mb-2">₹{{ product.price }}</p>
+
+            {% if product.stock > 0 %}
+              <span class="badge text-success">In Stock</span>
+            {% else %}
+              <span class="badge text-danger">Out of Stock</span>
+            {% endif %}
+
+            {% if product.slug %}
+    <a href="{% url 'product_detail' product.slug %}" class="btn btn-green text-white btn-sm">View Details</a>
+{% else %}
+    <button class="btn btn-secondary btn-sm" disabled>No Details</button>
+{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+<!-- PAGINATION -->
+<div class="d-flex justify-content-center mt-4">
+  <nav>
+    <ul class="pagination">
+
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&min={{ request.GET.min }}&max={{ request.GET.max }}&sort={{ request.GET.sort }}">
+          « Prev
+        </a>
+      </li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+      <li class="page-item {% if num == page_obj.number %} active {% endif %}">
+        <a class="page-link" href="?page={{ num }}&min={{ request.GET.min }}&max={{ request.GET.max }}&sort={{ request.GET.sort }}">
+          {{ num }}
+        </a>
+      </li>
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}&min={{ request.GET.min }}&max={{ request.GET.max }}&sort={{ request.GET.sort }}">
+          Next » 
+        </a>
+      </li>
+      {% endif %}
+
+    </ul>
+  </nav>
+</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2 class="mb-3">Manage Products</h2>
+
+<a href="{% url 'adminpanel:product_add' %}" class="btn btn-success mb-3">+ Add New Product</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td><img src="{{ p.image.url }}" width="60"></td>
+            <td>{{ p.name }}</td>
+            <td>₹{{ p.price }}</td>
+            <td>{{ p.stock }}</td>
+
+            <td>
+                <a href="{% url 'adminpanel:product_edit' p.id %}" class="btn btn-success btn-sm">Edit</a>
+
+                <a href="{% url 'adminpanel:product_delete' p.id %}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Delete this product?');">
+                   Delete
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

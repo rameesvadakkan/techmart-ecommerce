@@ -1,0 +1,34 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h3>Manage Return Request #{{ req.id }}</h3>
+<hr>
+
+<p><strong>Order:</strong> #{{ req.order.id }}</p>
+<p><strong>Product:</strong> {{ req.item.product.name }}</p>
+<p><strong>User:</strong> {{ req.user.username }}</p>
+<p><strong>Reason:</strong> {{ req.reason }}</p>
+<p><strong>Status:</strong> {{ req.get_status_display }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <label class="form-label">Update Status</label>
+    <select name="status" class="form-select" required>
+        <option value="pending" {% if req.status == "pending" %}selected{% endif %}>Pending</option>
+        <option value="approved" {% if req.status == "approved" %}selected{% endif %}>Approved</option>
+        <option value="rejected" {% if req.status == "rejected" %}selected{% endif %}>Rejected</option>
+        <option value="refunded" {% if req.status == "refunded" %}selected{% endif %}>Refunded</option>
+    </select>
+
+    <label class="form-label mt-3">Admin Response</label>
+    <textarea name="response" class="form-control">{{ req.admin_response }}</textarea>
+
+    <button class="btn btn-success mt-3">Update</button>
+</form>
+
+
+<a href="{% url 'adminpanel:return_requests' %}" class="btn btn-secondary mt-3">
+    Back
+</a>
+{% endblock %}

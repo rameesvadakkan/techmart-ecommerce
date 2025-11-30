@@ -1,0 +1,124 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h3>Checkout</h3>
+<h4>Select Delivery Address</h4>
+
+<form id="codForm" method="POST">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+        {% for addr in addresses %}
+        <div class="col-md-4">
+            <div class="card {% if addr.is_default %}border-success{% endif %} mb-3">
+                <div class="card-body">
+                    <h5>{{ addr.full_name }}</h5>
+                    <p>{{ addr.phone }}</p>
+                    <p>{{ addr.address }}, {{ addr.city }} - {{ addr.pincode }}</p>
+
+                    <label class="mt-2">
+                        <input type="radio" name="selected_address" value="{{ addr.id }}"
+                               {% if addr.is_default %}checked{% endif %}>
+                        Use this address
+                    </label>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'add_address' %}" class="btn btn-secondary btn-sm mb-3">
+        + Add New Address
+    </a>
+
+    <hr>
+
+    <!-- 🔥 PAYMENT OPTIONS -->
+    <h4>Payment Method</h4>
+
+    <label>
+        <input type="radio" name="payment_method" value="COD" checked onclick="togglePayment()">
+        Cash on Delivery (COD)
+    </label>
+    <br>
+
+    <label>
+        <input type="radio" name="payment_method" value="ONLINE" onclick="togglePayment()">
+        Online Payment (Razorpay)
+    </label>
+
+    <hr>
+
+    <h4>Total: ₹{{ cart.get_total_price }}</h4>
+
+    <!-- COD Button -->
+    <button type="submit" id="codBtn" class="btn btn-success">
+        Place Order (COD)
+    </button>
+</form>
+
+<!-- Razorpay Pay Button (Hidden initially) -->
+<button id="payBtn" class="btn btn-dark btn-lg" style="display:none;">
+    Pay with Razorpay
+</button>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+function togglePayment() {
+    let method = document.querySelector('input[name="payment_method"]:checked').value;
+
+    if (method === "COD") {
+        document.getElementById("codBtn").style.display = "inline-block";
+        document.getElementById("payBtn").style.display = "none";
+    } else {
+        document.getElementById("codBtn").style.display = "none";
+        document.getElementById("payBtn").style.display = "inline-block";
+    }
+}
+
+togglePayment();  // call on page load
+
+document.getElementById("payBtn").onclick = function () {
+
+    // Get selected address
+    let address = document.querySelector("input[name='selected_address']:checked");
+    
+    if (!address) {
+        alert("Please select an address!");
+        return;
+    }
+
+    // Save address in session (backend uses it later)
+    fetch("{% url 'create_razorpay_order' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "amount={{ cart.get_total_price }}"
+    })
+    .then(response => response.json())
+    .then(data => {
+        var options = {
+            "key": data.key,
+            "amount": data.amount,
+            "currency": "INR",
+            "name": "TechMart",
+            "description": "Order Payment",
+            "order_id": data.order_id,
+
+            "handler": function (response) {
+                window.location.href =
+                    "/orders/place_online_order/?razorpay_order_id=" + response.razorpay_order_id +
+                    "&address_id=" + address.value;
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+    });
+};
+</script>
+
+{% endblock %}

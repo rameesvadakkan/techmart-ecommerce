@@ -1,0 +1,43 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Admin Dashboard</h2>
+    <hr>
+
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h3>{{ total_users }}</h3>
+                <p>Users</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h3>{{ total_products }}</h3>
+                <p>Products</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h3>{{ total_orders }}</h3>
+                <p>Orders</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h3>{{ total_returns }}</h3>
+                <p>Return Requests</p>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'adminpanel:user_list' %}" class="btn btn-success mt-4">Manage Users</a>
+    <a href="{% url 'adminpanel:product_list' %}" class="btn btn-success mt-4">Manage Products</a>
+    <a href="{% url 'adminpanel:order_list' %}" class="btn btn-success mt-4">Manage Orders</a>
+    <a href="{% url 'adminpanel:return_requests' %}" class="btn btn-success mt-4">Manage Return Requests</a>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<h3 class="mb-4 text-success fw-bold">My Orders</h3>
+
+{% if orders %}
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-success">
+            <tr>
+                <th style="width: 120px;">Order ID</th>
+                <th>Date</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
+                
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td class="fw-semibold">#{{ order.id }}</td>
+
+                <td>{{ order.created_at|date:"M d, Y - h:i A" }}</td>
+
+                <td class="fw-bold text-success">₹{{ order.total_amount }}</td>
+
+                <td>
+    <span class="badge bg-success">{{ order.get_status_display }}</span>
+</td>
+                 <td class="text-center">
+                    <a href="{% url 'order_detail' order.id %}" 
+                       class="btn btn-sm btn-outline-success px-3">
+                        View Details
+                    </a>
+                    <a href="{% url 'track_order' order.id %}" class="btn btn-info btn-sm">
+    Track Order
+</a>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+</div>
+
+{% else %}
+<div class="alert alert-info text-center">
+    You have no orders yet.
+</div>
+{% endif %}
+
+{% endblock %}

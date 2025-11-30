@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="container mt-4" style="max-width: 600px;">
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h3 class="mb-3 text-center">⭐ Rate: {{ product.name }}</h3>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Rating Field -->
+                <label class="form-label fw-bold">Select Rating</label>
+                <input type="number" min="1" max="5" class="form-control mb-3" 
+                       name="rating" value="{{ form.rating.value|default:5 }}">
+
+                <!-- Review Field -->
+                <label class="form-label fw-bold">Write a Review</label>
+                <textarea class="form-control mb-3" rows="4"
+                          name="review"
+                          placeholder="Share your experience...">{{ form.review.value }}</textarea>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-success w-100">
+                    Submit Rating
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

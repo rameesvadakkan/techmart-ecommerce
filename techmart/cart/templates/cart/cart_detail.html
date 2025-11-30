@@ -1,0 +1,100 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<h3>Your Cart</h3>
+<hr>
+
+{% if cart %}
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Total</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>₹{{ item.price }}</td>
+       <td>
+  <form action="{% url 'cart_update' item.product.id %}" method="POST" class="d-flex">
+    {% csrf_token %}
+    
+    <input type="hidden" name="current_quantity" value="{{ item.quantity }}">
+
+    <button class="btn btn-sm btn-outline-secondary" name="action" value="decrease">-</button>
+
+    <input type="text" name="quantity" value="{{ item.quantity }}" 
+           class="form-control form-control-sm text-center mx-1" 
+           style="width: 50px;">
+
+    <button class="btn btn-sm btn-outline-secondary" name="action" value="increase">+</button>
+  </form>
+</td>
+        <td>₹{{ item.total_price }}</td>
+        <td>
+          <a href="{% url 'cart_remove' item.product.id %}" class="btn btn-danger btn-sm">
+            Remove
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4>Total: ₹{{ cart.get_total_price }}</h4>
+  <h5>Apply Coupon</h5>
+
+<form action="{% url 'apply_coupon' %}" method="POST" class="mb-3 d-flex">
+    {% csrf_token %}
+    <input type="text" name="code" class="form-control w-50" placeholder="Enter coupon">
+    <button class="btn btn-success ms-2">Apply</button>
+</form>
+
+{% if request.session.coupon_id %}
+    <p class="text-success">
+        Coupon Applied: <strong>{{ coupon.code }}</strong> ({{ coupon.discount }}% OFF)
+    </p>
+    <p>Discount: ₹{{ cart.get_discount }}</p>
+{% endif %}
+<hr>
+
+<h4>Price Details</h4>
+
+<table class="table">
+    <tr>
+        <td>Subtotal</td>
+        <td class="text-end">₹{{ cart.get_total_price }}</td>
+    </tr>
+
+    {% if coupon %}
+    <tr>
+        <td>
+            Coupon ({{ coupon.code }})
+            <a href="{% url 'remove_coupon' %}" class="text-danger ms-2">Remove</a>
+        </td>
+        <td class="text-end text-success">- ₹{{ discount }}</td>
+    </tr>
+    {% endif %}
+
+    <tr class="fw-bold">
+        <td>Total</td>
+        <td class="text-end">₹{{ final_total }}</td>
+    </tr>
+</table>
+
+<h4>Final Total: ₹{{ cart.get_final_price }}</h4>
+
+<a href="{% url 'checkout' %}" class="btn btn-success btn-lg mt-3 mb-4">
+  Proceed to Checkout
+</a>
+{% else %}
+  <p>Your cart is empty.</p>
+{% endif %}
+<p><a href="{% url 'product_list' %}" class="btn btn-success">Continue Shopping</a></p>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h3>All Orders</h3>
+
+<table class="table table-bordered mt-3">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User</th>
+      <th>Total</th>
+      <th>Status</th>
+      <th>Date</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for o in orders %}
+    <tr>
+      <td>#{{ o.id }}</td>
+      <td>{{ o.user.username }}</td>
+      <td>₹{{ o.total_amount }}</td>
+      <td>{{ o.get_status_display }}</td>
+      <td>{{ o.created_at|date:"M d, Y h:i A" }}</td>
+      <td>
+        <a href="{% url 'adminpanel:order_detail' o.id %}" class="btn btn-sm btn-success">View</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+
+</table>
+{% endblock %}

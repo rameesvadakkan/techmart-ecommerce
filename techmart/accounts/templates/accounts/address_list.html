@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h3>My Addresses</h3>
+<a href="{% url 'add_address' %}" class="btn btn-success mb-3">+ Add New Address</a>
+
+{% if addresses %}
+<div class="row">
+    {% for addr in addresses %}
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>{{ addr.full_name }}</h5>
+                <p>{{ addr.phone }}</p>
+                <p>{{ addr.address }}, {{ addr.city }} - {{ addr.pincode }}</p>
+
+                {% if addr.is_default %}
+                <span class="badge bg-success">Default</span>
+                {% else %}
+                <a href="{% url 'set_default_address' addr.id %}" class="btn btn-outline-success btn-sm">
+                    Make Default
+                </a>
+                {% endif %}
+
+                <a href="{% url 'edit_address' addr.id %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'delete_address' addr.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No saved addresses yet.</p>
+{% endif %}
+
+{% endblock %}

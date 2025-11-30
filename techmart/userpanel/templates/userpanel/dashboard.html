@@ -1,0 +1,31 @@
+{% extends "userpanel/base_userpanel.html" %}
+
+{% block user_content %}
+<h3>Welcome, {{ request.user.username }} 👋</h3>
+<hr>
+
+<div class="row text-center">
+
+    <div class="col-md-4 mb-3">
+        <div class="card p-3 shadow-sm">
+            <h4>🧾 {{ orders.count }}</h4>
+            <p>Orders</p>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card p-3 shadow-sm">
+            <h4>❤️ {{ wishlist_count }}</h4>
+            <p>Wishlist Items</p>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card p-3 shadow-sm">
+            <h4>↩️ {{ return_count }}</h4>
+            <p>Return Requests</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

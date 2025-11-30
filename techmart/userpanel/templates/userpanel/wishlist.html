@@ -1,0 +1,55 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">My Wishlist ❤️</h2>
+
+    {% if items %}
+    <div class="row">
+        {% for w in items %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <img src="{{ w.product.image.url }}" class="card-img-top" alt="{{ w.product.name }}">
+
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ w.product.name }}</h5>
+                    <p class="text-muted">₹{{ w.product.price }}</p>
+
+                    {% if w.product.stock > 0 %}
+                        <span class="badge bg-success mb-2">In Stock</span>
+                    {% else %}
+                        <span class="badge bg-danger mb-2">Out of Stock</span>
+                    {% endif %}
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="{% url 'product_detail' w.product.slug %}"
+                           class="btn btn-primary btn-sm">
+                            View Product
+                        </a>
+
+                        {% if w.product.stock > 0 %}
+                        <a href="{% url 'cart_add' w.product.id %}"
+                           class="btn btn-success btn-sm">
+                           Add to Cart
+                        </a>
+                        {% endif %}
+
+                        <a href="{% url 'remove_from_wishlist' w.product.id %}"
+                           class="btn btn-danger btn-sm">
+                           Remove
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <p class="text-muted">Your wishlist is empty.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
