@@ -7,23 +7,20 @@ from django.contrib import messages
 from django.db.models import Q, Avg
 from django.core.paginator import Paginator
 
+
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
+
+    # BASE QUERY
     products = Product.objects.filter(available=True)
-    # AFTER all filters applied
-    paginator = Paginator(products, 6)   # Show 6 products per page
 
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
-
-    # If category selected
+    # -------- CATEGORY FILTER --------
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
 
-    # ---- PRICE FILTER ----
+    # -------- PRICE FILTER --------
     min_price = request.GET.get("min")
     max_price = request.GET.get("max")
 
@@ -33,7 +30,7 @@ def product_list(request, category_slug=None):
     if max_price:
         products = products.filter(price__lte=max_price)
 
-    # ---- SORTING ----
+    # -------- SORTING --------
     sort_by = request.GET.get("sort")
 
     if sort_by == "low":
@@ -43,14 +40,22 @@ def product_list(request, category_slug=None):
     elif sort_by == "new":
         products = products.order_by("-id")
     elif sort_by == "rating":
-        products = products.annotate(avg_rating=Avg("ratings__rating")).order_by("-avg_rating")
+        products = products.annotate(
+            avg_rating=Avg("ratings__rating")
+        ).order_by("-avg_rating")
 
-    return render(request, 'products/product_list.html', {
-        'category': category,
-        'categories': categories,
-        'products': page_obj,    # <-- CHANGED
-        'page_obj': page_obj,  
+    # -------- PAGINATION (LAST) --------
+    paginator = Paginator(products, 6)  # 6 items per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "products/product_list.html", {
+        "category": category,
+        "categories": categories,
+        "products": page_obj,
+        "page_obj": page_obj,
     })
+
     
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, available=True)
