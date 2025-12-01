@@ -5,16 +5,47 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .decorators import admin_only
 
-@admin_only
+from django.db.models import Sum
+from orders.models import Order
+from django.utils.timezone import now
+import calendar
+
 def dashboard(request):
-    context = {
-        'total_orders': Order.objects.count(),
-        'pending_orders': Order.objects.filter(status='pending').count(),
-        'delivered_orders': Order.objects.filter(status='delivered').count(),
-        'total_products': Product.objects.count(),
-        'total_users': User.objects.count(),
-    }
-    return render(request, 'adminpanel/dashboard.html', context)
+    total_users = User.objects.count()
+    total_products = Product.objects.count()
+    total_orders = Order.objects.count()
+    total_returns = ReturnRequest.objects.count()
+
+    total_revenue = Order.objects.aggregate(total=Sum('total_amount'))['total'] or 0
+
+    # Create monthly graph data
+    months = []
+    sales_data = []
+    orders_data = []
+
+    for i in range(1, 13):
+        month_name = calendar.month_abbr[i]
+        months.append(month_name)
+
+        monthly_orders = Order.objects.filter(created_at__month=i)
+        orders_data.append(monthly_orders.count())
+        sales_data.append(
+            monthly_orders.aggregate(total=Sum('total_amount'))['total'] or 0
+        )
+
+    recent_orders = Order.objects.order_by('-id')[:5]
+
+    return render(request, "adminpanel/dashboard.html", {
+        "total_users": total_users,
+        "total_products": total_products,
+        "total_orders": total_orders,
+        "total_returns": total_returns,
+        "total_revenue": total_revenue,
+        "months": months,
+        "sales_data": sales_data,
+        "orders_data": orders_data,
+        "recent_orders": recent_orders,
+    })
 
 
 # ========== ORDERS ==========

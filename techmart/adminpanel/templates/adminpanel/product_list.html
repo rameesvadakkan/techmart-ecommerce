@@ -1,5 +1,7 @@
-{% extends "core/base.html" %}
-{% block content %}
+{% extends "adminpanel/admin_base.html" %}
+
+{% block admin_content %}
+
 <h2 class="mb-3">Manage Products</h2>
 
 <a href="{% url 'adminpanel:product_add' %}" class="btn btn-success mb-3">+ Add New Product</a>

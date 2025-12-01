@@ -1,43 +1,194 @@
-{% extends "core/base.html" %}
+{% extends "adminpanel/admin_base.html" %}
 
-{% block content %}
-<div class="container mt-4">
-    <h2>Admin Dashboard</h2>
-    <hr>
+{% load static %}
 
-    <div class="row text-center">
-        <div class="col-md-3">
-            <div class="card p-3 shadow-sm">
-                <h3>{{ total_users }}</h3>
-                <p>Users</p>
+{% block admin_content %}
+<div class="d-flex">
+
+    <!-- Sidebar -->
+    {% include "adminpanel/sidebar.html" %}
+
+    <!-- Main Area -->
+    <div class="container-fluid p-4">
+
+
+        <h2 class="mb-4">📊 Admin Analytics Dashboard</h2>
+
+        <!-- TOP STATS -->
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3 text-center">
+                    <h4>{{ total_users }}</h4>
+                    <p class="text-muted">Total Users</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3 text-center">
+                    <h4>{{ total_products }}</h4>
+                    <p class="text-muted">Products</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3 text-center">
+                    <h4>{{ total_orders }}</h4>
+                    <p class="text-muted">Orders</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3 text-center">
+                    <h4>₹{{ total_revenue }}</h4>
+                    <p class="text-muted">Total Revenue</p>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card p-3 shadow-sm">
-                <h3>{{ total_products }}</h3>
-                <p>Products</p>
+        <!-- GRAPH AREA -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm p-3">
+                    <h5>📆 Monthly Sales</h5>
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm p-3">
+                    <h5>📦 Orders Overview</h5>
+                    <canvas id="ordersChart"></canvas>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card p-3 shadow-sm">
-                <h3>{{ total_orders }}</h3>
-                <p>Orders</p>
+        <!-- RECENT ORDERS -->
+        <div class="card mt-4 shadow-sm">
+            <div class="card-header bg-success text-white">
+                <strong>Recent Orders</strong>
             </div>
+
+            <table class="table table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for o in recent_orders %}
+                    <tr>
+                        <td>#{{ o.id }}</td>
+                        <td>{{ o.user.username }}</td>
+                        <td>₹{{ o.total_amount }}</td>
+                        <td>{{ o.get_status_display }}</td>
+                        <td>{{ o.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
 
-        <div class="col-md-3">
-            <div class="card p-3 shadow-sm">
-                <h3>{{ total_returns }}</h3>
-                <p>Return Requests</p>
-            </div>
-        </div>
     </div>
-
-    <a href="{% url 'adminpanel:user_list' %}" class="btn btn-success mt-4">Manage Users</a>
-    <a href="{% url 'adminpanel:product_list' %}" class="btn btn-success mt-4">Manage Products</a>
-    <a href="{% url 'adminpanel:order_list' %}" class="btn btn-success mt-4">Manage Orders</a>
-    <a href="{% url 'adminpanel:return_requests' %}" class="btn btn-success mt-4">Manage Return Requests</a>
+    
 </div>
+<style>
+/* Light Mode (default) */
+body {
+    background: #f8f9fa;
+    color: #212529;
+}
+
+/* Dark Mode */
+.dark-mode {
+    background: #181818 !important;
+    color: #e4e4e4 !important;
+}
+
+.dark-mode .card {
+    background: #242424 !important;
+    color: #e4e4e4 !important;
+}
+
+.dark-mode .sidebar {
+    background: #111 !important;
+    border-right: 1px solid #333 !important;
+}
+
+.dark-mode a {
+    color: #00c896 !important;
+}
+
+.dark-mode .btn {
+    border-color: #00c896 !important;
+}
+
+.toggle-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    background: #198754;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+</style>
+
+
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+var ctx = document.getElementById("salesChart");
+var salesChart = new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: {{ months|safe }},
+        datasets: [{
+            label: "Sales (₹)",
+            data: {{ sales_data|safe }},
+        }]
+    }
+});
+
+var ctx2 = document.getElementById("ordersChart");
+var ordersChart = new Chart(ctx2, {
+    type: "bar",
+    data: {
+        labels: {{ months|safe }},
+        datasets: [{
+            label: "Orders",
+            data: {{ orders_data|safe }},
+        }]
+    }
+});
+</script>
+<script>
+// Load saved theme
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark-mode");
+}
+
+// Toggle function
+document.getElementById("themeToggle").onclick = function () {
+    document.body.classList.toggle("dark-mode");
+
+    if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+        this.innerText = "Light Mode";
+    } else {
+        localStorage.setItem("theme", "light");
+        this.innerText = "Dark Mode";
+    }
+};
+</script>
+
+
 {% endblock %}

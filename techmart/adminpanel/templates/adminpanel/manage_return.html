@@ -1,6 +1,7 @@
 {% extends "core/base.html" %}
 
 {% block content %}
+<div class="admin-content">
 <h3>Manage Return Request #{{ req.id }}</h3>
 <hr>
 
@@ -31,4 +32,5 @@
 <a href="{% url 'adminpanel:return_requests' %}" class="btn btn-secondary mt-3">
     Back
 </a>
+</div>
 {% endblock %}

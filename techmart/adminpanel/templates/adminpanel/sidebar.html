@@ -1,0 +1,102 @@
+<style>
+/* Sidebar container */
+.admin-sidebar {
+    width: 230px;
+    min-height: 100vh;
+    background: #1e1e2f;
+    padding: 20px 15px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    color: #fff;
+}
+
+/* Sidebar title */
+.admin-sidebar h4 {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+/* Nav Items */
+.admin-sidebar .nav-link {
+    color: #c9c9d4 !important;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+/* Icons */
+.admin-sidebar .nav-link i {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+/* Hover */
+.admin-sidebar .nav-link:hover {
+    background: #34344a;
+    color: #fff !important;
+}
+
+/* Active Highlight */
+.admin-sidebar .active {
+    background: #4e8cff !important;
+    color: #fff !important;
+}
+
+/* Content margin */
+.admin-content {
+    margin-left: 250px;
+    padding: 30px;
+}
+</style>
+
+<div class="admin-sidebar">
+
+    <h4>⚙ Admin Panel</h4>
+
+    <ul class="nav flex-column">
+
+        <li class="nav-item">
+            <a href="{% url 'adminpanel:dashboard' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+               <i class="bi bi-bar-chart-fill"></i> Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{% url 'adminpanel:user_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}">
+               <i class="bi bi-people-fill"></i> Users
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{% url 'adminpanel:product_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+               <i class="bi bi-box-seam"></i> Products
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{% url 'adminpanel:order_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">
+               <i class="bi bi-truck"></i> Orders
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{% url 'adminpanel:return_requests' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'return_requests' %}active{% endif %}">
+               <i class="bi bi-arrow-repeat"></i> Returns
+            </a>
+        </li>
+
+    </ul>
+
+</div>
