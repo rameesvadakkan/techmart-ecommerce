@@ -6,16 +6,16 @@ from .models import Address
 from .forms import AddressForm
 from django.contrib import messages 
 from .models import Profile
+from .forms import RegisterForm
 
 def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)   # Auto login after register
-            return redirect('home')
+            form.save()
+            return redirect('login')
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
 
     return render(request, 'accounts/register.html', {'form': form})
 
