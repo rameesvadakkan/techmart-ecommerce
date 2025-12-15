@@ -154,3 +154,10 @@ AUTHENTICATION_BACKENDS = [
     'accounts.auth_backend.PhoneEmailBackend',
 ]
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
